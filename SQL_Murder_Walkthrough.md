@@ -143,4 +143,68 @@ INSERT INTO solution VALUES (1, 'Jeremy Bowers');
 |-----|
 | Congrats, you found the murderer! But wait, there's more... If you think you're up for a challenge, try querying the interview transcript of the murderer to find the real villain behind this crime. If you feel especially confident in your SQL skills, try to complete this final step with no more than 2 queries. Use this same INSERT statement with your new suspect to check your answer. |
 
-Yay!!! but wait, there is more! Let's see who is behind the murder
+Yay!!! but wait, there is more! Let's see who is behind the murder in no more than 2 queries after seeing Jeremy's interview.
+
+
+### 7. Check Jeremy Bower's interview:
+
+```SQL
+SELECT person.name, interview.transcript
+  FROM person
+  JOIN interview
+    ON interview.person_id = person.id
+ WHERE LOWER(person.name) = 'jeremy bowers'
+```
+
+| name | transcript |
+|------|------------|
+| Jeremy Bowers | I was hired by a woman with a lot of money. I don't know her name but I know she's around 5'5" (65") or 5'7" (67"). She has red hair and she drives a Tesla Model S. I know that she attended the SQL Symphony Concert 3 times in December 2017. 
+
+### 8. Find the mastermind in 2 queries:
+1. Let's find who matches the description
+```SQL
+SELECT person.name, drivers_license.height, income.annual_income
+  FROM person
+  JOIN drivers_license
+    ON person.license_id = drivers_license.id
+  JOIN income
+    ON income.ssn = person.ssn
+ WHERE drivers_license.height BETWEEN '65' AND '67'
+   AND drivers_license.car_model = 'Model S'
+   AND drivers_license.hair_color = 'red'
+   AND income.annual_income > 100000
+```
+| name | height | annual_income |
+|------|--------|---------------|
+| Red Korb | 65 | 278000 |
+| Miranda Priestly | 66 | 310000 |
+
+Looks like we have to use a second query to find who used facebook 3 times in december 2017
+
+2. check facebook
+```SQL
+SELECT person.name, facebook_event_checkin.event_name, facebook_event_checkin.date
+  FROM person
+  JOIN facebook_event_checkin
+    ON facebook_event_checkin.person_id = person.id
+ WHERE facebook_event_checkin.date BETWEEN 20171130 AND 20180101
+   AND person.name = 'Red Korb' OR person.name = 'Miranda Priestly'
+```
+| name | event_name | date |
+|------|------------|------|
+| Miranda Priestly | SQL Symphony Concert | 20171206 | 
+| Miranda Priestly | SQL Symphony Concert | 20171212 | 
+| Miranda Priestly | SQL Symphony Concert | 20171229| 
+
+Looks like it was Miranda. Let's check
+
+### 9. Let's see if Miranda was behind it
+
+```SQL
+INSERT INTO solution VALUES (1, 'Miranda Priestly');
+        
+        SELECT value FROM solution;
+```
+| value |
+|-------|
+| Congrats, you found the brains behind the murder! Everyone in SQL City hails you as the greatest SQL detective of all time. Time to break out the champagne! |
